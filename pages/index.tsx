@@ -113,6 +113,7 @@ const ShortTerm = () => {
           if (shortTerm) {
             addMemory(shortTerm);
           }
+          setInput('');
           reviseShortTerm('');
         }}>Record</button>
         </div>
