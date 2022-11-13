@@ -25,7 +25,12 @@ function Logout() {
   );
 }
 
-const Memory = ({index, mem}: {index: number, mem: string}) => {
+const Memory = ({
+  index, 
+  mem,
+  onClick,
+  reminiscing,
+}: {index: number, mem: string, onClick: () => void, reminiscing: boolean}) => {
   const [isHover, setIsHover] = useState(false);
 
    const handleMouseEnter = () => {
@@ -35,7 +40,7 @@ const Memory = ({index, mem}: {index: number, mem: string}) => {
       setIsHover(false);
    };
   let opacity = 100 / (5 * (index + 1));
-  if (isHover) {
+  if (isHover || reminiscing) {
     opacity = 100;
   }
   const boxStyle = {
@@ -46,6 +51,7 @@ const Memory = ({index, mem}: {index: number, mem: string}) => {
     style={{border: '1px solid rgba(0, 0, 0, 0.1)', }}
     onMouseEnter={handleMouseEnter}
     onMouseLeave={handleMouseLeave}
+    onClick={onClick}
   >
     <p
       style={boxStyle}
@@ -72,6 +78,7 @@ const Home: NextPage = () => {
     createUser().catch(console.error);
     return () => setUserId(null);
   }, [storeUser]);
+  const [reminiscing, setReminiscing] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -100,7 +107,13 @@ const Home: NextPage = () => {
           setInput('');
         }}>Record</button>
         {
-          memories.map((mem, i) => <Memory key={mem} mem={mem} index={i} />)
+          memories.map((mem, i) => <Memory
+            key={mem}
+            mem={mem} 
+            index={i} 
+            reminiscing={reminiscing}
+            onClick={() => setReminiscing(!reminiscing)}
+          />)
         }
       </main>
 
