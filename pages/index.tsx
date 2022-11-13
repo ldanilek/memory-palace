@@ -14,7 +14,7 @@ function Logout() {
   return (
     <div className={styles.container}>
       {/* We know this component only renders if the user is logged in. */}
-      {user!.name ? <p>{`YOU ARE ${user!.name}`}</p> : null }
+      {user!.name ? <p style={{fontFamily:"Marker Felt"}}>{`YOU ARE ${user!.name}`}</p> : null }
       <button
         className="btn btn-primary"
         onClick={() => logout({ returnTo: window.location.origin })}
