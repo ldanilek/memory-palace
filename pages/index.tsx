@@ -25,6 +25,10 @@ function Logout() {
   );
 }
 
+const Memory = ({index, mem}: {index: number, mem: string}) => {
+  return <p style={{opacity: 100 * ((10 - index) / 10.0) + '%'}}>{mem}</p>
+}
+
 const Home: NextPage = () => {
   const memories = useQuery('memories') ?? [];
   const addMemory = useMutation('addMemory');
@@ -64,7 +68,7 @@ const Home: NextPage = () => {
           setInput('');
         }}>Record</button>
         {
-          memories.map((mem) => <p key={mem}>{mem}</p>)
+          memories.map((mem, i) => <Memory key={mem} mem={mem} index={i} />)
         }
       </main>
 
