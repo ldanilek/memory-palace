@@ -42,11 +42,15 @@ const Memory = ({index, mem}: {index: number, mem: string}) => {
     opacity: opacity + '%',
   };
 
-  return <p
-    style={boxStyle}
+  return <div
+    style={{border: '1px solid rgba(0, 0, 0, 0.1)', }}
     onMouseEnter={handleMouseEnter}
     onMouseLeave={handleMouseLeave}
-  >{mem}</p>
+  >
+    <p
+      style={boxStyle}
+    >{mem}</p>
+    </div>;
 }
 
 const Home: NextPage = () => {
