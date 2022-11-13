@@ -12,5 +12,6 @@ export default defineSchema({
   shortTerm: defineTable({
     author: s.id("users"),
     text: s.string(),
-  }).index('by_author', ['author']),
+    version: s.number(),
+  }).index('by_author', ['author', 'version']),
 });

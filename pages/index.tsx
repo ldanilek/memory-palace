@@ -109,9 +109,9 @@ const ShortTerm = () => {
             setInput(e.target.value);
             reviseShortTerm(e.target.value);
           }} />
-        <button className={styles.button} onClick={() => {
-          if (shortTerm) {
-            addMemory(shortTerm);
+        <button className={styles.button} onClick={async () => {
+          if (input) {
+            await addMemory(input);
           }
           setInput('');
           reviseShortTerm('');
