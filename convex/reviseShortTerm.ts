@@ -21,7 +21,7 @@ export default mutation(
       });
       return;
     }
-    await db.replace(shortTermDoc!._id, {
+    await db.insert('shortTerm', {
       text: memoryText,
       author: user._id,
       version: ((shortTermDoc!.version ?? 0) + 1),
