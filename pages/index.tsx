@@ -12,7 +12,7 @@ function Logout() {
   const { logout, user } = useAuth0();
   // useEffect(() => logout());
   return (
-    <div>
+    <div className={styles.container}>
       {/* We know this component only renders if the user is logged in. */}
       {user!.name ? <p>{`YOU ARE ${user!.name}`}</p> : null }
       <button
