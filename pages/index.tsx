@@ -26,7 +26,27 @@ function Logout() {
 }
 
 const Memory = ({index, mem}: {index: number, mem: string}) => {
-  return <p style={{opacity: 100 / ( 5 * (index + 1)) + '%'}}>{mem}</p>
+  const [isHover, setIsHover] = useState(false);
+
+   const handleMouseEnter = () => {
+      setIsHover(true);
+   };
+   const handleMouseLeave = () => {
+      setIsHover(false);
+   };
+  let opacity = 100 / (5 * (index + 1));
+  if (isHover) {
+    opacity = 100;
+  }
+  const boxStyle = {
+    opacity: opacity + '%',
+  };
+
+  return <p
+    style={boxStyle}
+    onMouseEnter={handleMouseEnter}
+    onMouseLeave={handleMouseLeave}
+  >{mem}</p>
 }
 
 const Home: NextPage = () => {
