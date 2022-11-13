@@ -11,7 +11,9 @@
 
 import type { ApiFromModules } from "convex/browser";
 import type * as addMemory from "../addMemory";
+import type * as getShortTerm from "../getShortTerm";
 import type * as memories from "../memories";
+import type * as reviseShortTerm from "../reviseShortTerm";
 import type * as storeUser from "../storeUser";
 
 /**
@@ -25,6 +27,8 @@ import type * as storeUser from "../storeUser";
  */
 export type API = ApiFromModules<{
   addMemory: typeof addMemory;
+  getShortTerm: typeof getShortTerm;
   memories: typeof memories;
+  reviseShortTerm: typeof reviseShortTerm;
   storeUser: typeof storeUser;
 }>;

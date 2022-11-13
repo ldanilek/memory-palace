@@ -9,4 +9,8 @@ export default defineSchema({
     name: s.string(),
     tokenIdentifier: s.string(),
   }).index("by_token", ["tokenIdentifier"]),
+  shortTerm: defineTable({
+    author: s.id("users"),
+    text: s.string(),
+  }).index('by_author', ['author']),
 });

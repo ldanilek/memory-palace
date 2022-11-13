@@ -12,7 +12,7 @@ export default mutation(
         q.eq("tokenIdentifier", identity.tokenIdentifier)
       )
       .unique();
-    db.insert('memories', {
+    await db.insert('memories', {
       text: memoryText,
       author: user._id,
     });

@@ -59,10 +59,66 @@ const Memory = ({
     </div>;
 }
 
-const Home: NextPage = () => {
+const Memories = () => {
   const memories = useQuery('memories') ?? [];
-  const addMemory = useMutation('addMemory');
+  const [reminiscing, setReminiscing] = useState(false);
+  return <div className={styles.container}>{
+          memories.map((mem, i) => <Memory
+            key={mem}
+            mem={mem} 
+            index={i} 
+            reminiscing={reminiscing}
+            onClick={() => setReminiscing(!reminiscing)}
+          />)
+        }
+        </div>
+}
+
+const ShortTerm = () => {
+  const shortTerm = useQuery('getShortTerm');
+  const [recalledShortTerm, setRecalledShortTerm] = useState(false);
+  const reviseShortTerm = useMutation('reviseShortTerm').withOptimisticUpdate((localQueryStore, memoryText) => {
+    localQueryStore.setQuery('getShortTerm', [], memoryText);
+    console.log(`optimistic for ${memoryText}`);
+  });
   const [input, setInput] = useState('');
+  const addMemory = useMutation('addMemory');
+
+  useEffect(() => {
+    if (typeof shortTerm !== 'string') {
+      return;
+    }
+    if (recalledShortTerm) {
+      return;
+    }
+    // don't do it again.
+    setRecalledShortTerm(true);
+    // If still no typing, let short term memory kick in.
+    console.log('input', input);
+    console.log('shortTerm', shortTerm);
+    if (!input && shortTerm) {
+      setInput(shortTerm);
+    }
+  }, [shortTerm]);
+
+  return <div className={styles.container} style={{width: '100%'}} >
+    <textarea style={{width: '95%', height: '8em'}} placeholder={
+          "Each memory was, for an instant, the most important part of your life." +
+          " And your life is important. Record them in Convex forever before " +
+          "they are lost forever."} value={input} onChange={(e) => {
+            setInput(e.target.value);
+            reviseShortTerm(e.target.value);
+          }} />
+        <button className={styles.button} onClick={() => {
+          if (shortTerm) {
+            addMemory(shortTerm);
+          }
+          reviseShortTerm('');
+        }}>Record</button>
+        </div>
+}
+
+const Home: NextPage = () => {
   const [userId, setUserId] = useState<Id<"users"> | null>(null);
   const storeUser = useMutation("storeUser");
   // Call the `storeUser` mutation function to store
@@ -78,7 +134,6 @@ const Home: NextPage = () => {
     createUser().catch(console.error);
     return () => setUserId(null);
   }, [storeUser]);
-  const [reminiscing, setReminiscing] = useState(false);
 
   return (
     <div className={styles.container}>
@@ -95,26 +150,11 @@ const Home: NextPage = () => {
         <h3 style={{opacity: '20%'}}>
           A place to put memories that might otherwise by lost forever by leaky compression in our metaphorical mental machinery.
           Don't despair. As the memories fade on screen they are just getting started in their long immortal lives on Convex servers.
-          And of course you can revisit them whenever you want.
+          And of course you can revisit them whenever you want. This is your personal space. Only you can see this.
         </h3>
         <Logout />
-        <textarea style={{width: '75%', height: '8em'}} placeholder={
-          "Each memory was, for an instant, the most important part of your life." +
-          " And your life is important. Record them in Convex forever before " +
-          "they are lost forever."} value={input} onChange={(e) => setInput(e.target.value)} />
-        <button className={styles.button} onClick={() => {
-          addMemory(input);
-          setInput('');
-        }}>Record</button>
-        {
-          memories.map((mem, i) => <Memory
-            key={mem}
-            mem={mem} 
-            index={i} 
-            reminiscing={reminiscing}
-            onClick={() => setReminiscing(!reminiscing)}
-          />)
-        }
+        <ShortTerm />
+        <Memories />
       </main>
 
       <footer className={styles.footer}>
