@@ -26,7 +26,7 @@ function Logout() {
 }
 
 const Memory = ({index, mem}: {index: number, mem: string}) => {
-  return <p style={{opacity: 100 * ((10 - index) / 10.0) + '%'}}>{mem}</p>
+  return <p style={{opacity: 100 / ( 5 * index) + '%'}}>{mem}</p>
 }
 
 const Home: NextPage = () => {
