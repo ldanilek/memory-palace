@@ -154,8 +154,8 @@ const Home: NextPage = () => {
           And of course you can revisit them whenever you want. This is your personal space. Only you can see this.
         </h3>
         <Logout />
-        <ShortTerm />
-        <Memories />
+        { userId ? <ShortTerm /> : null }
+        { userId ? <Memories /> : null }
       </main>
 
       <footer className={styles.footer}>
