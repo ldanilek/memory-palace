@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { useQuery, useMutation } from '../convex/_generated/react'
+import { useQuery, useMutation, usePaginatedQuery } from '../convex/_generated/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth0 } from "@auth0/auth0-react";
 import { Id } from '../convex/_generated/dataModel'
@@ -60,7 +60,7 @@ const Memory = ({
 }
 
 const Memories = () => {
-  const memories = useQuery('memories') ?? [];
+  const memories = usePaginatedQuery('memories', {initialNumItems: 20});
   const [reminiscing, setReminiscing] = useState(false);
   return <div className={styles.container}>{
           memories.map((mem, i) => <Memory
