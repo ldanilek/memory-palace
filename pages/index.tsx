@@ -48,6 +48,7 @@ const Memory = forwardRef(({
   };
 
   return <div
+    className={styles.memoryBox}
     style={{border: '1px solid rgba(0, 0, 0, 0.1)', }}
     ref={ref}
     onMouseEnter={handleMouseEnter}
