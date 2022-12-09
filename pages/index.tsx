@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { useQuery, useMutation, usePaginatedQuery } from '../convex/_generated/react'
-import { useCallback, useEffect, useState } from 'react'
+import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useAuth0 } from "@auth0/auth0-react";
 import { Id } from '../convex/_generated/dataModel'
 
@@ -25,12 +25,12 @@ function Logout() {
   );
 }
 
-const Memory = ({
+const Memory = forwardRef(({
   index, 
   mem,
   onClick,
   reminiscing,
-}: {index: number, mem: string, onClick: () => void, reminiscing: boolean}) => {
+}: {index: number, mem: string, onClick: () => void, reminiscing: boolean}, ref: ForwardedRef<HTMLDivElement>) => {
   const [isHover, setIsHover] = useState(false);
 
    const handleMouseEnter = () => {
@@ -49,6 +49,7 @@ const Memory = ({
 
   return <div
     style={{border: '1px solid rgba(0, 0, 0, 0.1)', }}
+    ref={ref}
     onMouseEnter={handleMouseEnter}
     onMouseLeave={handleMouseLeave}
     onClick={onClick}
@@ -57,18 +58,39 @@ const Memory = ({
       style={boxStyle}
     >{mem}</p>
     </div>;
-}
+});
 
 const Memories = () => {
-  const memories = usePaginatedQuery('memories', {initialNumItems: 20});
+  const {results: memories, status, loadMore} = usePaginatedQuery('memories', {initialNumItems: 10});
   const [reminiscing, setReminiscing] = useState(false);
+  const loader = useRef(null);
+  /// When the third to last memory is on screen, load more.
+  const loaderIndex = memories.length - 3;
+  const handleObserver = (entries: any) => {
+    const target = entries[0];
+    console.log("handle observer triggered", target.isIntersecting, status);
+    if (target.isIntersecting && status == 'CanLoadMore') {
+      loadMore(5);
+    }
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver);
+    if (loader.current) {
+      observer.observe(loader.current);
+      console.log("intersection observer created at index", loaderIndex);
+    }
+    return () => observer.disconnect();
+  }, [loader, loaderIndex]);
+
   return <div className={styles.container}>{
           memories.map((mem, i) => <Memory
-            key={mem}
+            key={i}
             mem={mem} 
             index={i} 
             reminiscing={reminiscing}
             onClick={() => setReminiscing(!reminiscing)}
+            ref={i === loaderIndex ? loader : null}
           />)
         }
         </div>
@@ -79,7 +101,7 @@ const ShortTerm = () => {
   const [recalledShortTerm, setRecalledShortTerm] = useState(false);
   const reviseShortTerm = useMutation('reviseShortTerm').withOptimisticUpdate((localQueryStore, memoryText) => {
     localQueryStore.setQuery('getShortTerm', [], memoryText);
-    console.log(`optimistic for ${memoryText}`);
+    // console.log(`optimistic for ${memoryText}`);
   });
   const [input, setInput] = useState('');
   const addMemory = useMutation('addMemory');
