@@ -1,6 +1,8 @@
-import { query } from './_generated/server'
+import { Auth } from 'convex/dist/types/server/server';
+import { Document } from './_generated/dataModel';
+import { DatabaseReader, query } from './_generated/server'
 
-export default query(async ({ db, auth }) => {
+export const getUser = async (db: DatabaseReader, auth: Auth): Promise<Document<'users'>> => {
   const identity = await auth.getUserIdentity();
     if (!identity) {
       throw new Error("Unauthenticated call to sendMessage");
@@ -11,6 +13,11 @@ export default query(async ({ db, auth }) => {
         q.eq("tokenIdentifier", identity.tokenIdentifier)
       )
       .unique();
+    return user!;
+};
+
+export default query(async ({ db, auth }) => {
+  const user = await getUser(db, auth);
   const shortTermDoc = await db.query('shortTerm').withIndex("by_author", q => q.eq('author', user._id)).order('desc').first();
   return shortTermDoc ? shortTermDoc.text : null;
 });
