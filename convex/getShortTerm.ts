@@ -1,8 +1,8 @@
-import { Auth } from 'convex/dist/types/server/server';
-import { Document } from './_generated/dataModel';
+import { Auth } from 'convex/server';
+import { Doc } from './_generated/dataModel';
 import { DatabaseReader, query } from './_generated/server'
 
-export const getUser = async (db: DatabaseReader, auth: Auth): Promise<Document<'users'>> => {
+export const getUser = async (db: DatabaseReader, auth: Auth): Promise<Doc<'users'>> => {
   const identity = await auth.getUserIdentity();
     if (!identity) {
       throw new Error("Unauthenticated call to sendMessage");

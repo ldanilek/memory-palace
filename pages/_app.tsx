@@ -3,11 +3,10 @@ import type { AppProps } from 'next/app'
 import { useAuth0 } from "@auth0/auth0-react";
 
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
-import clientConfig from '../convex/_generated/clientConfig'
 import { ConvexProviderWithAuth0 } from "convex/react-auth0";
 import convexConfig from "../convex.json";
 
-const convex = new ConvexReactClient(clientConfig);
+const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 const authInfo = convexConfig.authInfo[0];
 
 
@@ -21,7 +20,7 @@ export function Login() {
       <h1 className="text-center">Memory Palace</h1>
       <div className="text-center">
         <span>
-          <button className="btn btn-primary" onClick={loginWithRedirect}>
+          <button className="btn btn-primary" onClick={() => loginWithRedirect()}>
             Log in
           </button>
         </span>
