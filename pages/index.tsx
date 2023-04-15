@@ -6,6 +6,27 @@ import { useQuery, useMutation, usePaginatedQuery } from '../convex/_generated/r
 import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useAuth0 } from "@auth0/auth0-react";
 import { Id } from '../convex/_generated/dataModel'
+import { AuthLoading, Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
+
+
+export function Login() {
+  const { isLoading, loginWithRedirect } = useAuth0();
+  if (isLoading) {
+    return <button className="btn btn-primary">Loading...</button>;
+  }
+  return (
+    <main className="py-4">
+      <h1 className="text-center">Memory Palace</h1>
+      <div className="text-center">
+        <span>
+          <button className="btn btn-primary" onClick={() => loginWithRedirect()}>
+            Log in
+          </button>
+        </span>
+      </div>
+    </main>
+  );
+}
 
 
 function Logout() {
@@ -14,7 +35,7 @@ function Logout() {
   return (
     <div className={styles.container}>
       {/* We know this component only renders if the user is logged in. */}
-      {user!.name ? <p style={{fontFamily:"Marker Felt"}}>{`YOU ARE ${user!.name}`}</p> : null }
+      {user?.name ? <p style={{fontFamily:"Marker Felt"}}>{`YOU ARE ${user!.name}`}</p> : null }
       <button
         className="btn btn-primary"
         onClick={() => logout()}
@@ -142,7 +163,7 @@ const ShortTerm = () => {
         </div>
 }
 
-const Home: NextPage = () => {
+const LoggedIn = () => {
   const [userId, setUserId] = useState<Id<"users"> | null>(null);
   const storeUser = useMutation("storeUser");
   // Call the `storeUser` mutation function to store
@@ -195,6 +216,14 @@ const Home: NextPage = () => {
       </footer>
     </div>
   )
+};
+
+const Home: NextPage = () => {
+  return (<div>
+    <Authenticated><LoggedIn /></Authenticated>
+    <Unauthenticated><Login /></Unauthenticated>
+    <AuthLoading>Logging in...</AuthLoading>
+  </div>);
 }
 
 export default Home
