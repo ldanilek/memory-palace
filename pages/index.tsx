@@ -38,7 +38,7 @@ function Logout() {
       {user?.name ? <p style={{fontFamily:"Marker Felt"}}>{`YOU ARE ${user!.name}`}</p> : null }
       <button
         className="btn btn-primary"
-        onClick={() => logout()}
+        onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
       >
         Log out
       </button>
