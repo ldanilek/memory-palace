@@ -83,7 +83,7 @@ const Memory = forwardRef(({
 });
 
 const Memories = () => {
-  const {results: memories, status, loadMore} = usePaginatedQuery('memories', {initialNumItems: 10});
+  const {results: memories, status, loadMore} = usePaginatedQuery('memories', {}, {initialNumItems: 10});
   const [reminiscing, setReminiscing] = useState(false);
   const loader = useRef(null);
   /// When the third to last memory is on screen, load more.
@@ -121,8 +121,8 @@ const Memories = () => {
 const ShortTerm = () => {
   const shortTerm = useQuery('getShortTerm');
   const [recalledShortTerm, setRecalledShortTerm] = useState(false);
-  const reviseShortTerm = useMutation('reviseShortTerm').withOptimisticUpdate((localQueryStore, memoryText) => {
-    localQueryStore.setQuery('getShortTerm', [], memoryText);
+  const reviseShortTerm = useMutation('reviseShortTerm').withOptimisticUpdate((localQueryStore, {memoryText}) => {
+    localQueryStore.setQuery('getShortTerm', {}, memoryText);
     // console.log(`optimistic for ${memoryText}`);
   });
   const [input, setInput] = useState('');
@@ -151,14 +151,14 @@ const ShortTerm = () => {
           " And your life is important. Record them in Convex forever before " +
           "they are lost forever."} value={input} onChange={(e) => {
             setInput(e.target.value);
-            reviseShortTerm(e.target.value);
+            reviseShortTerm({memoryText: e.target.value});
           }} />
         <button className={styles.button} onClick={async () => {
           if (input) {
-            await addMemory(input);
+            await addMemory({memoryText: input});
           }
           setInput('');
-          reviseShortTerm('');
+          reviseShortTerm({memoryText: ''});
         }}>Record</button>
         </div>
 }

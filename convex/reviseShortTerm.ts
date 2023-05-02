@@ -2,7 +2,7 @@ import { getUser } from './getShortTerm';
 import { mutation } from './_generated/server'
 
 export default mutation(
-  async ({ db, auth }, memoryText: string) => {
+  async ({ db, auth }, {memoryText}: {memoryText: string}) => {
     const user = await getUser(db, auth);
     const shortTermDoc = await db.query('shortTerm').withIndex("by_author", q => q.eq('author', user._id)).order('desc').first();
     if (!shortTermDoc) {

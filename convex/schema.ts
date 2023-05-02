@@ -1,17 +1,18 @@
-import { defineSchema, defineTable, s } from "convex/schema";
+import { defineSchema, defineTable } from "convex/schema";
+import { v } from "convex/values";
 
 export default defineSchema({
   memories: defineTable({
-    text: s.string(),
-    author: s.id("users"),
+    text: v.string(),
+    author: v.id("users"),
   }).index('by_author', ['author']),
   users: defineTable({
-    name: s.string(),
-    tokenIdentifier: s.string(),
+    name: v.string(),
+    tokenIdentifier: v.string(),
   }).index("by_token", ["tokenIdentifier"]),
   shortTerm: defineTable({
-    author: s.id("users"),
-    text: s.string(),
-    version: s.number(),
+    author: v.id("users"),
+    text: v.string(),
+    version: v.number(),
   }).index('by_author', ['author', 'version']),
 });
