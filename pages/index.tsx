@@ -2,7 +2,8 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import { useQuery, useMutation, usePaginatedQuery } from '../convex/_generated/react'
+import { useQuery, useMutation, usePaginatedQuery } from 'convex/react'
+import { api } from '../convex/_generated/api'
 import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { useAuth0 } from "@auth0/auth0-react";
 import { Id } from '../convex/_generated/dataModel'
@@ -83,7 +84,7 @@ const Memory = forwardRef(({
 });
 
 const Memories = () => {
-  const {results: memories, status, loadMore} = usePaginatedQuery('memories', {}, {initialNumItems: 10});
+  const {results: memories, status, loadMore} = usePaginatedQuery(api.memories.default, {}, {initialNumItems: 10});
   const [reminiscing, setReminiscing] = useState(false);
   const loader = useRef(null);
   /// When the third to last memory is on screen, load more.
@@ -119,14 +120,14 @@ const Memories = () => {
 }
 
 const ShortTerm = () => {
-  const shortTerm = useQuery('getShortTerm');
+  const shortTerm = useQuery(api.getShortTerm.default);
   const [recalledShortTerm, setRecalledShortTerm] = useState(false);
-  const reviseShortTerm = useMutation('reviseShortTerm').withOptimisticUpdate((localQueryStore, {memoryText}) => {
-    localQueryStore.setQuery('getShortTerm', {}, memoryText);
+  const reviseShortTerm = useMutation(api.reviseShortTerm.default).withOptimisticUpdate((localQueryStore, {memoryText}) => {
+    localQueryStore.setQuery(api.getShortTerm.default, {}, memoryText);
     // console.log(`optimistic for ${memoryText}`);
   });
   const [input, setInput] = useState('');
-  const addMemory = useMutation('addMemory');
+  const addMemory = useMutation(api.addMemory.default);
 
   useEffect(() => {
     if (typeof shortTerm !== 'string') {
@@ -165,7 +166,7 @@ const ShortTerm = () => {
 
 const LoggedIn = () => {
   const [userId, setUserId] = useState<Id<"users"> | null>(null);
-  const storeUser = useMutation("storeUser");
+  const storeUser = useMutation(api.storeUser.default);
   // Call the `storeUser` mutation function to store
   // the current user in the `users` table and return the `Id` value.
   useEffect(() => {
