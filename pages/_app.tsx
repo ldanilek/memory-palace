@@ -6,11 +6,12 @@ import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import { ConvexProviderWithAuth0 } from "convex/react-auth0";
 import convexConfig from "../convex.json";
 
-const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!, {verbose: true});
 const authInfo = convexConfig.authInfo[0];
 
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // console.log(useAuth0());
   return (
     <Auth0Provider
       domain={process.env.NEXT_PUBLIC_AUTH0_DOMAIN!}
