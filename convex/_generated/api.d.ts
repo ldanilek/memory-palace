@@ -143,7 +143,7 @@ export declare const components: {
         { currentKey: any; newKey: any; summand?: number; value: any },
         null
       >;
-      replaceIfExists: FunctionReference<
+      replaceOrInsert: FunctionReference<
         "mutation",
         "internal",
         { currentKey: any; newKey: any; summand?: number; value: any },

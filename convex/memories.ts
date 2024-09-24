@@ -1,4 +1,4 @@
-import { MutationBuilder, PaginationOptions, PaginationResult } from 'convex/server';
+import { PaginationOptions, PaginationResult } from 'convex/server';
 import { getUser } from './getShortTerm';
 import { query } from './_generated/server'
 import { internalMutation } from "./_generated/server";
@@ -6,6 +6,7 @@ import { Migrations } from "@convex-dev/migrations";
 import { components } from "./_generated/api";
 import { Aggregate } from "@convex-dev/aggregate";
 import { DataModel, Id } from './_generated/dataModel';
+import { MutationBuilder } from '../node_modules/convex/dist/cjs-types/server/index';
 
 const aggregate = new Aggregate<string, Id<"memories">>(components.aggregate);
 
@@ -28,15 +29,15 @@ export const count = query(async (ctx) => {
 });
 
 export const migrations = new Migrations<DataModel>(components.migrations, {
-  internalMutation: internalMutation as MutationBuilder<DataModel, "internal">,
+  internalMutation: internalMutation as any as MutationBuilder<DataModel, "internal">,
 });
 
-/*
 export const aggregateMemories = migrations.define({
   table: "memories",
   migrateOne: async (ctx, doc) => {
     aggregate.insertIfDoesNotExist(ctx, doc.author, doc._id);
   },
 });
-*/
+
+export const run = migrations.runFromCLI();
 
