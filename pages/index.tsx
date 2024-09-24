@@ -84,6 +84,7 @@ const Memory = forwardRef(({
 });
 
 const Memories = () => {
+  const count = useQuery(api.memories.count);
   const {results: memories, status, loadMore} = usePaginatedQuery(api.memories.default, {}, {initialNumItems: 10});
   const [reminiscing, setReminiscing] = useState(false);
   const loader = useRef(null);
@@ -106,7 +107,11 @@ const Memories = () => {
     return () => observer.disconnect();
   }, [loader, loaderIndex]);
 
-  return <div className={styles.container}>{
+  console.log(count);
+
+  return <div className={styles.container}>
+    {count ? <p>You have {count} memories</p> : null}
+    {
           memories.map((mem, i) => <Memory
             key={i}
             mem={mem} 

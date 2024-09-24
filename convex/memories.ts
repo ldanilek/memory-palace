@@ -35,6 +35,7 @@ export const migrations = new Migrations<DataModel>(components.migrations, {
 export const aggregateMemories = migrations.define({
   table: "memories",
   migrateOne: async (ctx, doc) => {
+    console.log("aggregating memory", doc._id);
     aggregate.insertIfDoesNotExist(ctx, doc.author, doc._id);
   },
 });
