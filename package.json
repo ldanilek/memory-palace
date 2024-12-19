@@ -9,8 +9,11 @@
     "@auth0/auth0-react": "^2.0.1",
     "@convex-dev/aggregate": "^0.1.5",
     "@convex-dev/migrations": "^0.1.2",
+    "@convex-dev/prosemirror-sync": "^0.1.6",
+    "@tiptap/react": "^2.10.4",
+    "@tiptap/starter-kit": "^2.10.4",
     "concurrently": "^7.6.0",
-    "convex": "^1.16.2",
+    "convex": "^1.17.4",
     "next": "^14.2.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

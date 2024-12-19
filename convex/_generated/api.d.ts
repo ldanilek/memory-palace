@@ -1,5 +1,3 @@
-/* prettier-ignore-start */
-
 /* eslint-disable */
 /**
  * Generated `api` utility.
@@ -13,6 +11,7 @@
 import type * as addMemory from "../addMemory.js";
 import type * as getShortTerm from "../getShortTerm.js";
 import type * as memories from "../memories.js";
+import type * as prosemirror from "../prosemirror.js";
 import type * as reviseShortTerm from "../reviseShortTerm.js";
 import type * as storeUser from "../storeUser.js";
 
@@ -33,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   addMemory: typeof addMemory;
   getShortTerm: typeof getShortTerm;
   memories: typeof memories;
+  prosemirror: typeof prosemirror;
   reviseShortTerm: typeof reviseShortTerm;
   storeUser: typeof storeUser;
 }>;
@@ -56,49 +56,22 @@ export declare const components: {
         { k1?: any; k2?: any },
         { count: number; sum: number }
       >;
-      aggregateBetweenHandler: FunctionReference<
-        "query",
-        "internal",
-        { k1?: any; k2?: any },
-        { count: number; sum: number }
-      >;
       atOffset: FunctionReference<
         "query",
         "internal",
         { offset: number },
         { k: any; s: number; v: any }
       >;
-      atOffsetHandler: FunctionReference<
-        "query",
-        "internal",
-        { offset: number },
-        { k: any; s: number; v: any }
-      >;
       count: FunctionReference<"query", "internal", {}, any>;
-      countHandler: FunctionReference<"query", "internal", {}, any>;
       get: FunctionReference<
         "query",
         "internal",
         { key: any },
         null | { k: any; s: number; v: any }
       >;
-      getHandler: FunctionReference<
-        "query",
-        "internal",
-        { key: any },
-        null | { k: any; s: number; v: any }
-      >;
       offset: FunctionReference<"query", "internal", { key: any }, number>;
-      offsetHandler: FunctionReference<
-        "query",
-        "internal",
-        { key: any },
-        number
-      >;
       sum: FunctionReference<"query", "internal", {}, number>;
-      sumHandler: FunctionReference<"query", "internal", {}, number>;
       validate: FunctionReference<"query", "internal", {}, any>;
-      validateTree: FunctionReference<"query", "internal", {}, any>;
     };
     inspect: {
       display: FunctionReference<"query", "internal", {}, any>;
@@ -242,6 +215,75 @@ export declare const components: {
       >;
     };
   };
+  prosemirrorSync: {
+    lib: {
+      deleteDocument: FunctionReference<
+        "mutation",
+        "internal",
+        { id: string },
+        null
+      >;
+      deleteSnapshots: FunctionReference<
+        "mutation",
+        "internal",
+        { afterVersion?: number; beforeVersion?: number; id: string },
+        null
+      >;
+      deleteSteps: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          afterVersion?: number;
+          beforeTs: number;
+          deleteNewerThanLatestSnapshot?: boolean;
+          id: string;
+        },
+        null
+      >;
+      getSnapshot: FunctionReference<
+        "query",
+        "internal",
+        { id: string; version?: number },
+        { content: null } | { content: string; version: number }
+      >;
+      getSteps: FunctionReference<
+        "query",
+        "internal",
+        { id: string; version: number },
+        {
+          clientIds: Array<string | number>;
+          steps: Array<string>;
+          version: number;
+        }
+      >;
+      latestVersion: FunctionReference<
+        "query",
+        "internal",
+        { id: string },
+        null | number
+      >;
+      submitSnapshot: FunctionReference<
+        "mutation",
+        "internal",
+        { content: string; id: string; version: number },
+        null
+      >;
+      submitSteps: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          clientId: string | number;
+          id: string;
+          steps: Array<string>;
+          version: number;
+        },
+        | {
+            clientIds: Array<string | number>;
+            status: "needs-rebase";
+            steps: Array<string>;
+          }
+        | { status: "synced" }
+      >;
+    };
+  };
 };
-
-/* prettier-ignore-end */
