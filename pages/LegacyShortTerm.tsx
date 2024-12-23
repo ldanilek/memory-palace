@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { api } from "../convex/_generated/api";
 import styles from '../styles/Home.module.css'
 
-export const ShortTerm = () => {
+export default function LegacyShortTerm() {
   const shortTerm = useQuery(api.getShortTerm.default);
   const [recalledShortTerm, setRecalledShortTerm] = useState(false);
   const reviseShortTerm = useMutation(api.reviseShortTerm.default).withOptimisticUpdate((localQueryStore, {memoryText}) => {

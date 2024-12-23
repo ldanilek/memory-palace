@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { Id } from "../convex/_generated/dataModel";
 
-export function ShortTerm() {
+export default function ShortTerm() {
   const unsealedPacketId = useQuery(api.memories.unsealedPacket);
   const createUnsealedPacket = useMutation(api.memories.createUnsealedPacket);
 

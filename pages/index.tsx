@@ -8,7 +8,7 @@ import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } fr
 import { useAuth0 } from "@auth0/auth0-react";
 import { Id } from '../convex/_generated/dataModel'
 import { AuthLoading, Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
-import { ShortTerm } from './ShortTerm';
+import ShortTerm from './ShortTerm';
 import { MemoryContent } from '../convex/memories'
 import { useTiptapSync } from '@convex-dev/prosemirror-sync/tiptap'
 import { EditorContent, EditorProvider } from '@tiptap/react'
