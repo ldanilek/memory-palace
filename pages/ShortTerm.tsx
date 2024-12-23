@@ -2,30 +2,72 @@ import { useTiptapSync } from "@convex-dev/prosemirror-sync/tiptap";
 import { EditorContent, EditorProvider } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { api } from "../convex/_generated/api";
-import { RegisteredQuery } from "convex/server";
-import { RegisteredQuery as CjsRegisteredQuery } from "../node_modules/convex/dist/cjs-types/server";
-
-import type * as prosemirror from "../convex/prosemirror";
-export type IsRegisteredQuery<Export> = Export extends RegisteredQuery<any, any, any> ? string : never;
-export type IsCjsRegisteredQuery<Export> = Export extends CjsRegisteredQuery<any, any, any> ? string : never;
-
-const _x: IsRegisteredQuery<typeof prosemirror.getSnapshot> = "yes"; // errors
-const _y: IsCjsRegisteredQuery<typeof prosemirror.getSnapshot> = "yes"; // works
+import styles from '../styles/Home.module.css'
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { Id } from "../convex/_generated/dataModel";
 
 export function ShortTerm() {
-  const sync = useTiptapSync(api.prosemirror, "some-id");
-  return sync.isLoading ? (
-    <p>Loading...</p>
-  ) : sync.initialContent !== null ? (
+  const unsealedPacketId = useQuery(api.memories.unsealedPacket);
+  const createUnsealedPacket = useMutation(api.memories.createUnsealedPacket);
+
+  useEffect(() => {
+    if (unsealedPacketId === null) {
+      void createUnsealedPacket();
+    }
+  }, [unsealedPacketId]);
+
+  return unsealedPacketId === null || unsealedPacketId === undefined ? (
+    <Loading />
+  ) : (
+    <ShortTermWithPacket key={unsealedPacketId} packetId={unsealedPacketId} />
+  );
+}
+
+export function ShortTermWithPacket({ packetId }: { packetId: Id<"memoryPackets"> }) {
+  const sync = useTiptapSync(api.prosemirror, packetId);
+
+  useEffect(() => {
+    if (!sync.isLoading && sync.initialContent === null) {
+      sync.create({ type: "doc", content: [] });
+    }
+  }, [sync.isLoading, sync.initialContent]);
+
+  return sync.isLoading || sync.initialContent === null ? (
+    <Loading />
+  ) : (
     <EditorProvider
       content={sync.initialContent}
       extensions={[StarterKit, sync.extension]}
+      editorProps={{
+        attributes: {
+          class: styles.ProseMirror,
+        },
+      }}
+      editorContainerProps={{
+        className: styles.container,
+        style: {
+          width: '100%',
+          margin: '1em',
+        },
+      }}
     >
       <EditorContent editor={null} />
+      <RecordButton />
     </EditorProvider>
-  ) : (
-    <button onClick={() => sync.create({ type: "doc", content: [] })}>
-      Create document
-    </button>
   );
+}
+
+function Loading() {
+  return <>
+    <p className={styles.ProseMirror}>Loading...</p>
+    <RecordButton />
+  </>;
+}
+
+function RecordButton() {
+  const sealMemory = useMutation(api.addMemory.addMemoryFromProsemirror);
+  return <button className={styles.button} onClick={async () => {
+    await sealMemory();
+  }}>Record</button>;
 }

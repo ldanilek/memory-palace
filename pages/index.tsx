@@ -9,6 +9,10 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Id } from '../convex/_generated/dataModel'
 import { AuthLoading, Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
 import { ShortTerm } from './ShortTerm';
+import { MemoryContent } from '../convex/memories'
+import { useTiptapSync } from '@convex-dev/prosemirror-sync/tiptap'
+import { EditorContent, EditorProvider } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
 
 
 export function Login() {
@@ -53,7 +57,7 @@ const Memory = forwardRef(({
   mem,
   onClick,
   reminiscing,
-}: {index: number, mem: string, onClick: () => void, reminiscing: boolean}, ref: ForwardedRef<HTMLDivElement>) => {
+}: {index: number, mem: MemoryContent, onClick: (e: React.MouseEvent<HTMLDivElement>) => void, reminiscing: boolean}, ref: ForwardedRef<HTMLDivElement>) => {
   const [isHover, setIsHover] = useState(false);
 
    const handleMouseEnter = () => {
@@ -80,9 +84,27 @@ const Memory = forwardRef(({
   >
     <p
       style={boxStyle}
-    >{mem}</p>
+    >{mem.kind === "text" ? mem.text : <MemoryWithPacket key={mem.id} packetId={mem.id} />}</p>
     </div>;
 });
+
+function MemoryWithPacket({packetId}: {packetId: Id<"memoryPackets">}) {
+  const sync = useTiptapSync(api.prosemirror, packetId);
+  return (sync.isLoading || sync.initialContent === null ? <p>Loading...</p> :
+    <EditorProvider
+      content={sync.initialContent}
+      extensions={[StarterKit, sync.extension]}
+      editable={false}
+      editorProps={{
+        attributes: {
+          class: "ProseMirror",
+        },
+      }}
+    >
+      <EditorContent editor={null} />
+    </EditorProvider>
+  );
+}
 
 const Memories = () => {
   const {results: memories, status, loadMore} = usePaginatedQuery(api.memories.default, {}, {initialNumItems: 10});
@@ -113,7 +135,7 @@ const Memories = () => {
             mem={mem} 
             index={i} 
             reminiscing={reminiscing}
-            onClick={() => setReminiscing(!reminiscing)}
+            onClick={(e) => setReminiscing(!reminiscing)}
             ref={i === loaderIndex ? loader : null}
           />)
         }
