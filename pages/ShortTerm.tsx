@@ -37,6 +37,7 @@ export function ShortTermWithPacket({ packetId }: { packetId: Id<"memoryPackets"
     <Loading />
   ) : (
     <EditorProvider
+      immediatelyRender={false}
       content={sync.initialContent}
       extensions={[StarterKit, sync.extension]}
       editorProps={{

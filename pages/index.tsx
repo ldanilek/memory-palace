@@ -77,7 +77,6 @@ const Memory = forwardRef(({
   return <div
     className={styles.memoryBox}
     style={{border: '1px solid rgba(0, 0, 0, 0.1)', }}
-    ref={ref}
     onMouseEnter={handleMouseEnter}
     onMouseLeave={handleMouseLeave}
     onClick={onClick}
@@ -92,6 +91,7 @@ function MemoryWithPacket({packetId}: {packetId: Id<"memoryPackets">}) {
   const sync = useTiptapSync(api.prosemirror, packetId);
   return (sync.isLoading || sync.initialContent === null ? <p>Loading...</p> :
     <EditorProvider
+      immediatelyRender={false}
       content={sync.initialContent}
       extensions={[StarterKit, sync.extension]}
       editable={false}
@@ -131,7 +131,7 @@ const Memories = () => {
 
   return <div className={styles.container}>{
           memories.map((mem, i) => <Memory
-            key={i}
+            key={JSON.stringify(mem)}
             mem={mem} 
             index={i} 
             reminiscing={reminiscing}
