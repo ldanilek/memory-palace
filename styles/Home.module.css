@@ -117,3 +117,9 @@
     transform: rotate(360deg);
   }
 }
+
+.ProseMirror {
+  width: 95%;
+  height: 8em;
+  outline: 1px solid #eaeaea;
+}

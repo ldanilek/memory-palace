@@ -8,6 +8,11 @@ import { ForwardedRef, forwardRef, useCallback, useEffect, useRef, useState } fr
 import { useAuth0 } from "@auth0/auth0-react";
 import { Id } from '../convex/_generated/dataModel'
 import { AuthLoading, Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
+import ShortTerm from './ShortTerm';
+import { MemoryContent } from '../convex/memories'
+import { useTiptapSync } from '@convex-dev/prosemirror-sync/tiptap'
+import { EditorContent, EditorProvider } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
 
 
 export function Login() {
@@ -52,7 +57,7 @@ const Memory = forwardRef(({
   mem,
   onClick,
   reminiscing,
-}: {index: number, mem: string, onClick: () => void, reminiscing: boolean}, ref: ForwardedRef<HTMLDivElement>) => {
+}: {index: number, mem: MemoryContent, onClick: (e: React.MouseEvent<HTMLDivElement>) => void, reminiscing: boolean}, ref: ForwardedRef<HTMLDivElement>) => {
   const [isHover, setIsHover] = useState(false);
 
    const handleMouseEnter = () => {
@@ -79,9 +84,27 @@ const Memory = forwardRef(({
   >
     <p
       style={boxStyle}
-    >{mem}</p>
+    >{mem.kind === "text" ? mem.text : <MemoryWithPacket key={mem.id} packetId={mem.id} />}</p>
     </div>;
 });
+
+function MemoryWithPacket({packetId}: {packetId: Id<"memoryPackets">}) {
+  const sync = useTiptapSync(api.prosemirror, packetId);
+  return (sync.isLoading || sync.initialContent === null ? <p>Loading...</p> :
+    <EditorProvider
+      content={sync.initialContent}
+      extensions={[StarterKit, sync.extension]}
+      editable={false}
+      editorProps={{
+        attributes: {
+          class: "ProseMirror",
+        },
+      }}
+    >
+      <EditorContent editor={null} />
+    </EditorProvider>
+  );
+}
 
 const Memories = () => {
   const {results: memories, status, loadMore} = usePaginatedQuery(api.memories.default, {}, {initialNumItems: 10});
@@ -112,55 +135,10 @@ const Memories = () => {
             mem={mem} 
             index={i} 
             reminiscing={reminiscing}
-            onClick={() => setReminiscing(!reminiscing)}
+            onClick={(e) => setReminiscing(!reminiscing)}
             ref={i === loaderIndex ? loader : null}
           />)
         }
-        </div>
-}
-
-const ShortTerm = () => {
-  const shortTerm = useQuery(api.getShortTerm.default);
-  const [recalledShortTerm, setRecalledShortTerm] = useState(false);
-  const reviseShortTerm = useMutation(api.reviseShortTerm.default).withOptimisticUpdate((localQueryStore, {memoryText}) => {
-    localQueryStore.setQuery(api.getShortTerm.default, {}, memoryText);
-    // console.log(`optimistic for ${memoryText}`);
-  });
-  const [input, setInput] = useState('');
-  const addMemory = useMutation(api.addMemory.default);
-
-  useEffect(() => {
-    if (typeof shortTerm !== 'string') {
-      return;
-    }
-    if (recalledShortTerm) {
-      return;
-    }
-    // don't do it again.
-    setRecalledShortTerm(true);
-    // If still no typing, let short term memory kick in.
-    console.log('input', input);
-    console.log('shortTerm', shortTerm);
-    if (!input && shortTerm) {
-      setInput(shortTerm);
-    }
-  }, [shortTerm]);
-
-  return <div className={styles.container} style={{width: '100%'}} >
-    <textarea style={{width: '95%', height: '8em'}} placeholder={
-          "Each memory was, for an instant, the most important part of your life." +
-          " And your life is important. Record them in Convex forever before " +
-          "they are lost forever."} value={input} onChange={(e) => {
-            setInput(e.target.value);
-            reviseShortTerm({memoryText: e.target.value});
-          }} />
-        <button className={styles.button} onClick={async () => {
-          if (input) {
-            await addMemory({memoryText: input});
-          }
-          setInput('');
-          reviseShortTerm({memoryText: ''});
-        }}>Record</button>
         </div>
 }
 
